@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da56f02f75f848f0b60284d98a0d5db3, type: 3}
+  m_Name: GameplaySetting
+  m_EditorClassIdentifier: 
+  <MinPlatformSpawnPositionByX>k__BackingField: -2
+  <MaxPlatformSpawnPositionByX>k__BackingField: 2
+  <MinPlatformSpawnPositionByY>k__BackingField: 2
+  <MaxPlatformSpawnPositionByY>k__BackingField: 3
+  <StartPlatformSpawnPositionByY>k__BackingField: -5
+  <SpawnPositionPlayer>k__BackingField: {x: 0, y: -3.5}
+  <PlayerJumpForce>k__BackingField: 8
+  <PlayerMoveSpeed>k__BackingField: 3.75
+  <PlayerDeadDistance>k__BackingField: 7.5
