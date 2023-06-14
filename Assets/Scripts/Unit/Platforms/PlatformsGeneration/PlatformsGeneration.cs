@@ -2,8 +2,8 @@
 
 using System;
 using Data.AssetsAddressables;
+using Data.Setting;
 using Services.Factories.AbstractFactory;
-using Unit.Player;
 using UnityEngine;
 using UnityEngine.Events;
 using Zenject;
@@ -15,46 +15,38 @@ namespace Unit.Platforms.PlatformsGeneration
 {
     public class PlatformsGeneration
     {
+        [Inject]
         public PlatformsGeneration(
             IAbstractFactory abstractFactory,
-            float minPlatformSpawnPositionByX,
-            float maxPlatformSpawnPositionByX,
-            float minPlatformSpawnPositionByY,
-            float maxPlatformSpawnPositionByY,
-            Func<bool> isNotJumping,
-            UnityAction actionJump)
+            GameplaySetting gameplaySetting)
         {
             _abstractFactory = abstractFactory;
 
-            _minPlatformSpawnPositionByX = minPlatformSpawnPositionByX;
-            _maxPlatformSpawnPositionByX = maxPlatformSpawnPositionByX;
-            _minPlatformSpawnPositionByY = minPlatformSpawnPositionByY;
-            _maxPlatformSpawnPositionByY = maxPlatformSpawnPositionByY;
-
-            _isNotJumping = isNotJumping;
-            _actionJump = actionJump;
+            _minPlatformSpawnPositionByX = gameplaySetting.MinPlatformSpawnPositionByX;
+            _maxPlatformSpawnPositionByX = gameplaySetting.MaxPlatformSpawnPositionByX;
+            _minPlatformSpawnPositionByY = gameplaySetting.MinPlatformSpawnPositionByY;
+            _maxPlatformSpawnPositionByY = gameplaySetting.MaxPlatformSpawnPositionByY;
         }
 
         private const string PLATFORM_DEFAULT = AssetsAddressablesContainers.PLATFORM_DEFAULT;
 
         private readonly IAbstractFactory _abstractFactory;
-        
+
         private readonly float _maxPlatformSpawnPositionByX;
         private readonly float _maxPlatformSpawnPositionByY;
         private readonly float _minPlatformSpawnPositionByX;
         private readonly float _minPlatformSpawnPositionByY;
-        
-        private readonly Func<bool> _isNotJumping;
-        private readonly UnityAction _actionJump;
 
-        public async void Generation(float startSpawnPositionByY)
+        public async void Generation(
+            Vector2 startSpawnPosition,
+            Func<bool> onIsNotJumping,
+            UnityAction onActionJump)
         {
-            var spawnPosition = new Vector2(0, startSpawnPositionByY);
-
+            var spawnPosition = startSpawnPosition;
 
             for (var i = 0; i < 1000; i++)
             {
-                CreatedPlatform(spawnPosition, PLATFORM_DEFAULT, _isNotJumping, _actionJump);
+                CreatedPlatform(spawnPosition, PLATFORM_DEFAULT, onIsNotJumping, onActionJump);
 
                 spawnPosition.y += Random.Range(
                     _minPlatformSpawnPositionByY,
@@ -69,15 +61,15 @@ namespace Unit.Platforms.PlatformsGeneration
         private async void CreatedPlatform(
             Vector2 position,
             string typePlatform,
-            Func<bool> isNotJumping,
-            UnityAction actionsIsJumping)
+            Func<bool> onIsNotJumping,
+            UnityAction onActionsIsJumping)
         {
             var platform = await _abstractFactory.CreateInstance<GameObject>(typePlatform);
 
             platform.transform.position = position;
 
             if (platform.TryGetComponent<IPlatform>(out var iPlatform))
-                iPlatform.SetUp(isNotJumping, actionsIsJumping);
+                iPlatform.SetUp(onIsNotJumping, onActionsIsJumping);
         }
     }
 }

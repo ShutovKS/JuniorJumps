@@ -29,7 +29,7 @@ namespace Unit.Platforms
 
         public void PlatformTrigger()
         {
-            if (IsNotJumping())
+            if (IsNotJumping != null && IsNotJumping())
             {
                 ActionsIsJumping();
             }

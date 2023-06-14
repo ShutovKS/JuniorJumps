@@ -1,21 +1,22 @@
 ﻿#region
 
+using System;
 using System.Threading.Tasks;
 using Data.AssetsAddressables;
 using Data.Setting;
 using Services.Factories.AbstractFactory;
 using Services.Input;
 using Unit.Camera;
-using Unit.GameObjectNotVisible;
 using Unit.Platforms.PlatformsGeneration;
 using Unit.Player;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using Zenject;
 
 #endregion
 
-namespace Unit.GameplayController
+namespace Unit.Gameplay
 {
     public class GameplayController
     {
@@ -23,55 +24,51 @@ namespace Unit.GameplayController
         public GameplayController(
             IAbstractFactory abstractFactory,
             GameplaySetting gameplaySetting,
-            InputActionsReader inputActionsReader)
+            InputActionsReader inputActionsReader,
+            PlatformsGeneration platformsGeneration,
+            CameraController cameraController,
+            PlayerController playerController)
         {
             _playerTargetTransform = new GameObject("PlayerTarget").transform;
             _centerTargetTransform = new GameObject("CenterTarget").transform;
 
             _gameplaySetting = gameplaySetting;
-
-            _playerController = new PlayerController(
-                abstractFactory,
-                gameplaySetting.SpawnPositionPlayer,
-                gameplaySetting.PlayerJumpForce,
-                gameplaySetting.PlayerMoveSpeed,
-                inputActionsReader,
-                _playerTargetTransform);
-
-            _cameraController = new CameraController(
-                abstractFactory,
-                _centerTargetTransform);
-
-            _platformsGeneration = new PlatformsGeneration(
-                abstractFactory,
-                gameplaySetting.MinPlatformSpawnPositionByX,
-                gameplaySetting.MaxPlatformSpawnPositionByX,
-                gameplaySetting.MinPlatformSpawnPositionByY,
-                gameplaySetting.MaxPlatformSpawnPositionByY,
-                _playerController.IsNotJumping,
-                _playerController.Jump);
-
-            _playerDead = new PlayerDead(
-                _playerTargetTransform,
-                _centerTargetTransform,
-                gameplaySetting.PlayerDeadDistance,
-                MoveToMainMenu);
+            _playerController = playerController;
+            _cameraController = cameraController;
+            _platformsGeneration = platformsGeneration;
 
             Initialize();
         }
 
+        private readonly CameraController _cameraController;
+        private readonly Transform _centerTargetTransform;
+        private readonly GameplaySetting _gameplaySetting;
 
         private readonly PlatformsGeneration _platformsGeneration;
         private readonly PlayerController _playerController;
-        private readonly CameraController _cameraController;
-        private readonly GameplaySetting _gameplaySetting;
+
         private readonly Transform _playerTargetTransform;
-        private readonly Transform _centerTargetTransform;
-        private readonly PlayerDead _playerDead;
+        private UnityAction _onActionsIsJumping;
+
+        private Func<bool> _onIsNotJumping;
 
         private void Initialize()
         {
-            _platformsGeneration.Generation(_gameplaySetting.StartPlatformSpawnPositionByY);
+            _playerController.CreatePlayer(
+                _playerTargetTransform,
+                _gameplaySetting.SpawnPositionPlayer);
+
+            _onIsNotJumping = _playerController.IsNotJumping;
+            _onActionsIsJumping = _playerController.Jump;
+
+            _cameraController.CreatedCamera(
+                _centerTargetTransform);
+
+            _platformsGeneration.Generation(
+                new Vector2(0, _gameplaySetting.StartPlatformSpawnPositionByY),
+                _onIsNotJumping,
+                _onActionsIsJumping);
+
             FollowTarget();
         }
 
@@ -82,6 +79,12 @@ namespace Unit.GameplayController
                 if (_playerTargetTransform.position.y > _centerTargetTransform.position.y)
                 {
                     _centerTargetTransform.position = new Vector3(0, _playerTargetTransform.position.y, 0);
+                }
+                else if (_playerTargetTransform.position.y <
+                         _centerTargetTransform.position.y - _gameplaySetting.PlayerDeadDistance)
+                {
+                    MoveToMainMenu();
+                    return;
                 }
 
                 await Task.Yield();

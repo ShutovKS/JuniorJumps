@@ -1,6 +1,5 @@
 ﻿#region
 
-using System.Threading.Tasks;
 using Cinemachine;
 using Data.AssetsAddressables;
 using Services.Factories.AbstractFactory;
@@ -13,20 +12,16 @@ namespace Unit.Camera
 {
     public class CameraController
     {
+        [Inject]
         public CameraController(
-            IAbstractFactory abstractFactory,
-            Transform centerTargetTransform)
+            IAbstractFactory abstractFactory)
         {
-            _centerTargetTransform = centerTargetTransform;
             _abstractFactory = abstractFactory;
-            CreatedCamera();
         }
 
         private readonly IAbstractFactory _abstractFactory;
-        private readonly Transform _centerTargetTransform;
-        private CinemachineVirtualCamera _virtualCamera;
 
-        private async void CreatedCamera()
+        public async void CreatedCamera(Transform targetTransform)
         {
             var cameraInstance = await _abstractFactory
                 .CreateInstance<GameObject>(AssetsAddressablesContainers.CAMERA);
@@ -34,10 +29,10 @@ namespace Unit.Camera
             var virtualCameraInstance = await _abstractFactory
                 .CreateInstance<GameObject>(AssetsAddressablesContainers.VIRTUAL_CAMERA);
 
-            _virtualCamera = virtualCameraInstance.GetComponent<CinemachineVirtualCamera>();
-            
-            _virtualCamera.Follow = _centerTargetTransform;
-            _virtualCamera.LookAt = _centerTargetTransform;
+            var virtualCamera = virtualCameraInstance.GetComponent<CinemachineVirtualCamera>();
+
+            virtualCamera.Follow = targetTransform;
+            virtualCamera.LookAt = targetTransform;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Infrastructure.Installers
     {
         [SerializeField] private InputActionsReader _inputActionsReader;
         [SerializeField] private GameplaySetting _gameplaySetting;
-        
+
         public override void InstallBindings()
         {
             Debug.Log("ServicesInstaller InstallBindings");
@@ -63,7 +63,7 @@ namespace Infrastructure.Installers
         {
             Container.Bind<IAbstractFactory>().To<AbstractFactory>().AsSingle();
         }
-        
+
         private void BindInputActions()
         {
             Container.Bind<InputActionsReader>().FromInstance(_inputActionsReader).AsSingle();

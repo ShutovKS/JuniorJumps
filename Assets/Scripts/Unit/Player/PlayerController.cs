@@ -1,10 +1,11 @@
 ﻿#region
 
 using Data.AssetsAddressables;
+using Data.Setting;
 using Services.Factories.AbstractFactory;
 using Services.Input;
 using UnityEngine;
-using UnityEngine.Events;
+using Zenject;
 
 #endregion
 
@@ -12,31 +13,24 @@ namespace Unit.Player
 {
     public class PlayerController
     {
-        public PlayerController(IAbstractFactory abstractFactory,
-            Vector2 spawnPositionPlayer,
-            float jumpForce,
-            float moveSpeed,
-            InputActionsReader inputActionsReader,
-            Transform playerTargetTransform)
+        [Inject]
+        public PlayerController(
+            IAbstractFactory abstractFactory,
+            GameplaySetting gameplaySetting,
+            InputActionsReader inputActionsReader)
         {
-
-            _spawnPositionPlayer = spawnPositionPlayer;
-            _playerTargetTransform = playerTargetTransform;
+            _jumpForce = gameplaySetting.PlayerJumpForce;
+            _moveSpeed = gameplaySetting.PlayerMoveSpeed;
             _abstractFactory = abstractFactory;
-            _jumpForce = jumpForce;
-            _speed = moveSpeed;
 
             inputActionsReader.OnMovementInput = Move;
-
-            CreatePlayer();
         }
 
         private readonly IAbstractFactory _abstractFactory;
-        private readonly Vector2 _spawnPositionPlayer;
-        private readonly Transform _playerTargetTransform;
         private readonly float _jumpForce;
-        private readonly float _speed;
+        private readonly float _moveSpeed;
 
+        private Transform _playerTargetTransform;
         private Rigidbody2D _rigidbody2D;
 
         public void Jump()
@@ -51,13 +45,15 @@ namespace Unit.Player
 
         private void Move(float direction)
         {
-            _rigidbody2D.velocity = new Vector2(direction * _speed, _rigidbody2D.velocity.y);
+            _rigidbody2D.velocity = new Vector2(direction * _moveSpeed, _rigidbody2D.velocity.y);
         }
 
-        private async void CreatePlayer()
+        public async void CreatePlayer(Transform playerTargetTransform, Vector3 spawnPositionPlayer)
         {
+            _playerTargetTransform = playerTargetTransform;
+
             var playerInstance = await _abstractFactory.CreateInstance<GameObject>(AssetsAddressablesContainers.PLAYER);
-            playerInstance.transform.position = _spawnPositionPlayer;
+            playerInstance.transform.position = spawnPositionPlayer;
 
             _playerTargetTransform.SetParent(playerInstance.transform);
             _playerTargetTransform.localPosition = Vector3.zero;
