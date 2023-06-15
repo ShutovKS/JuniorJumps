@@ -29,6 +29,7 @@ namespace Unit.Platforms.PlatformsGeneration
         }
 
         private const string PLATFORM_DEFAULT = AssetsAddressablesContainers.PLATFORM_DEFAULT;
+        private const string PLATFORM_DESTROYING = AssetsAddressablesContainers.PLATFORM_DESTROYING;
 
         private readonly IAbstractFactory _abstractFactory;
 
@@ -46,7 +47,11 @@ namespace Unit.Platforms.PlatformsGeneration
 
             for (var i = 0; i < 1000; i++)
             {
-                CreatedPlatform(spawnPosition, PLATFORM_DEFAULT, onIsNotJumping, onActionJump);
+                CreatedPlatform(
+                    spawnPosition,
+                    i % 2 == 0 ? PLATFORM_DEFAULT : PLATFORM_DESTROYING,
+                    onIsNotJumping,
+                    onActionJump);
 
                 spawnPosition.y += Random.Range(
                     _minPlatformSpawnPositionByY,

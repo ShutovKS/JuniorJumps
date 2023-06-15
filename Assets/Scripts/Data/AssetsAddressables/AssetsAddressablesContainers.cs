@@ -3,6 +3,7 @@
     public static class AssetsAddressablesContainers
     {
         public const string PLATFORM_DEFAULT = "Platforms/Default";
+        public const string PLATFORM_DESTROYING = "Platforms/Destroying";
 
         public const string PLAYER = "Player";
 
