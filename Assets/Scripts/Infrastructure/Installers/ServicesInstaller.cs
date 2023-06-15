@@ -3,11 +3,8 @@
 using Data.Setting;
 using Services.AssetsAddressables;
 using Services.Factories.AbstractFactory;
-using Services.GameProgress;
 using Services.Input;
-using Services.ProgressWatcher;
 using Services.SaveLoadProgress;
-using Services.StaticData;
 using UnityEngine;
 using Zenject;
 
@@ -19,6 +16,7 @@ namespace Infrastructure.Installers
     {
         [SerializeField] private InputActionsReader _inputActionsReader;
         [SerializeField] private GameplaySetting _gameplaySetting;
+        [SerializeField] private PlayerSetting _playerSetting;
 
         public override void InstallBindings()
         {
@@ -26,10 +24,7 @@ namespace Infrastructure.Installers
 
             BindAssetsAdressables();
             BindInputActions();
-            BindStaticData();
             BindSetting();
-            BindGameProgress();
-            BindProgressWatcher();
             BindSaveLoadProgress();
             BindFactory();
         }
@@ -39,24 +34,9 @@ namespace Infrastructure.Installers
             Container.Bind<IAssetsAddressablesProvider>().To<AssetsAddressablesProvider>().AsSingle();
         }
 
-        private void BindGameProgress()
-        {
-            Container.Bind<IGameProgressService>().To<GameProgressService>().AsSingle();
-        }
-
-        private void BindProgressWatcher()
-        {
-            Container.Bind<IProgressWatcher>().To<ProgressWatcher>().AsSingle();
-        }
-
         private void BindSaveLoadProgress()
         {
             Container.Bind<ISaveLoadProgress>().To<SaveLoadProgress>().AsSingle();
-        }
-
-        private void BindStaticData()
-        {
-            Container.Bind<IStaticDataService>().To<StaticDataService>().AsSingle();
         }
 
         private void BindFactory()
@@ -72,6 +52,7 @@ namespace Infrastructure.Installers
         private void BindSetting()
         {
             Container.Bind<GameplaySetting>().FromInstance(_gameplaySetting).AsSingle();
+            Container.Bind<PlayerSetting>().FromInstance(_playerSetting).AsSingle();
         }
     }
 }

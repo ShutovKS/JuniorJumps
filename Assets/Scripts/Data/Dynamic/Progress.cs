@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using UnityEngine.Serialization;
 
 #endregion
 
@@ -11,9 +12,9 @@ namespace Data.Dynamic
     {
         public Progress()
         {
-            MaxPoints = new MaxPoints.MaxPoints();
+            maxPoints = new MaxPoints.MaxPoints();
         }
 
-        public MaxPoints.MaxPoints MaxPoints { get; set; }
+        public MaxPoints.MaxPoints maxPoints;
     }
 }

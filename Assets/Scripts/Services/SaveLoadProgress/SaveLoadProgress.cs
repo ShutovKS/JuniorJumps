@@ -1,10 +1,7 @@
 ﻿#region
 
 using Data.Dynamic;
-using Services.GameProgress;
-using Services.ProgressWatcher;
 using UnityEngine;
-using Zenject;
 
 #endregion
 
@@ -12,32 +9,25 @@ namespace Services.SaveLoadProgress
 {
     public class SaveLoadProgress : ISaveLoadProgress
     {
-        private const string PROGRESS_KEY = "Progress";
+        private const string PROGRESS_KEY = "ProgressKey";
 
-        private IGameProgressService _gameProgressService;
-        private IProgressWatcher _progressWatcher;
-
-        public void SaveProgress()
+        public void UpdateProgress(Progress progress)
         {
-            foreach (var watcher in _progressWatcher.ProgressWatchers)
-            {
-                watcher.UpdateProgress();
-            }
+            var progressJson = JsonUtility.ToJson(progress);
+            PlayerPrefs.SetString(PROGRESS_KEY, progressJson);
 
-            PlayerPrefs.SetString(PROGRESS_KEY, JsonUtility.ToJson(_gameProgressService.Progress));
+            Debug.Log($"UpdateProgress {progressJson}");
+            Debug.Log($"UpdateProgress {progress.maxPoints.value}");
         }
 
-        public void LoadProgress()
+        public Progress LoadProgress()
         {
-            if (!HasProgress()) return;
+            var progressJson = PlayerPrefs.GetString(PROGRESS_KEY);
+            var progress = JsonUtility.FromJson<Progress>(progressJson) ?? new Progress();
+            
+            Debug.Log($"LoadProgress {progress.maxPoints.value}");
 
-            var progress = JsonUtility.FromJson<Progress>(PlayerPrefs.GetString(PROGRESS_KEY));
-            _gameProgressService.SetProgress(progress);
-
-            foreach (var watcher in _progressWatcher.ProgressWatchers)
-            {
-                watcher.LoadProgress(progress);
-            }
+            return progress;
         }
 
         public void ClearProgress()
@@ -48,13 +38,6 @@ namespace Services.SaveLoadProgress
         public bool HasProgress()
         {
             return PlayerPrefs.HasKey(PROGRESS_KEY);
-        }
-
-        [Inject]
-        private void Construct(IGameProgressService gameProgressService, IProgressWatcher progressWatcher)
-        {
-            _gameProgressService = gameProgressService;
-            _progressWatcher = progressWatcher;
         }
     }
 }

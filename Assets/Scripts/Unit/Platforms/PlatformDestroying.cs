@@ -1,5 +1,9 @@
-﻿using System;
+﻿#region
+
+using System;
 using UnityEngine.Events;
+
+#endregion
 
 namespace Unit.Platforms
 {

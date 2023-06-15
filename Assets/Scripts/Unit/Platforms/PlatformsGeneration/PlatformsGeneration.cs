@@ -38,7 +38,7 @@ namespace Unit.Platforms.PlatformsGeneration
         private readonly float _minPlatformSpawnPositionByX;
         private readonly float _minPlatformSpawnPositionByY;
 
-        public async void Generation(
+        public void Generation(
             Vector2 startSpawnPosition,
             Func<bool> onIsNotJumping,
             UnityAction onActionJump)
@@ -74,7 +74,9 @@ namespace Unit.Platforms.PlatformsGeneration
             platform.transform.position = position;
 
             if (platform.TryGetComponent<IPlatform>(out var iPlatform))
+            {
                 iPlatform.SetUp(onIsNotJumping, onActionsIsJumping);
+            }
         }
     }
 }

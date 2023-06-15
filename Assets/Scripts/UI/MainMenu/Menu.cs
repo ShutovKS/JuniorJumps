@@ -1,6 +1,7 @@
 #region
 
 using Data.AssetsAddressables;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -17,11 +18,20 @@ namespace UI.MainMenu
 
         [SerializeField] private GameObject _mainPanel;
 
+        [SerializeField] private GameObject _pointsMaxPanel;
+        [SerializeField] private TextMeshProUGUI _pointsMaxText;
+
         private void Start()
         {
             _startButton.onClick.AddListener(OnStartButtonClick);
             _infoButton.onClick.AddListener(OnInfoButtonClick);
             _exitButton.onClick.AddListener(OnExitButtonClick);
+        }
+
+        public void SetMaxPoints(int pointsMax)
+        {
+            _pointsMaxPanel.SetActive(pointsMax != 0);
+            _pointsMaxText.text = $"{pointsMax}";
         }
 
         private void OnStartButtonClick()

@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inputActionsReader: {fileID: 11400000, guid: 83f25e1f4f1d5c849aaf206982639326, type: 2}
   _gameplaySetting: {fileID: 11400000, guid: 8ab4dd03a8732aa43bb2d106c73ca7c4, type: 2}
+  _playerSetting: {fileID: 11400000, guid: 56cef84815579074bb0722684b758fa0, type: 2}
 --- !u!1 &376471774195232978
 GameObject:
   m_ObjectHideFlags: 0

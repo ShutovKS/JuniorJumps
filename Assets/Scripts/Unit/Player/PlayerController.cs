@@ -16,11 +16,11 @@ namespace Unit.Player
         [Inject]
         public PlayerController(
             IAbstractFactory abstractFactory,
-            GameplaySetting gameplaySetting,
+            PlayerSetting playerSetting,
             InputActionsReader inputActionsReader)
         {
-            _jumpForce = gameplaySetting.PlayerJumpForce;
-            _moveSpeed = gameplaySetting.PlayerMoveSpeed;
+            _jumpForce = playerSetting.NormalJumpForce;
+            _moveSpeed = playerSetting.MoveSpeed;
             _abstractFactory = abstractFactory;
 
             inputActionsReader.OnMovementInput = Move;
