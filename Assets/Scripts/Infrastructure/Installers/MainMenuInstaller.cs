@@ -1,5 +1,9 @@
-﻿using Unit.MainMenu;
+﻿#region
+
+using Unit.MainMenu;
 using Zenject;
+
+#endregion
 
 namespace Infrastructure.Installers
 {
@@ -9,7 +13,7 @@ namespace Infrastructure.Installers
         {
             BindMainMenuController();
         }
-        
+
         private void BindMainMenuController()
         {
             Container.Bind<MainMenuController>().AsSingle().NonLazy();

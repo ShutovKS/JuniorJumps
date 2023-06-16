@@ -45,22 +45,23 @@ namespace Unit.Gameplay
             Initialize();
         }
 
+        private float _currentMaxPoints => _centerTargetTransform.position.y;
+
         private readonly CameraController _cameraController;
         private readonly Transform _centerTargetTransform;
         private readonly PlatformsGeneration _platformsGeneration;
         private readonly PlayerController _playerController;
-        private readonly ISaveLoadProgress _saveLoadProgress;
+        private readonly float _playerDeadDistance;
 
         private readonly Transform _playerTargetTransform;
+        private readonly ISaveLoadProgress _saveLoadProgress;
         private readonly Vector2 _spawnPositionPlayer;
         private readonly float _startPlatformSpawnPositionByY;
-        private readonly float _playerDeadDistance;
+
+        private Progress _currentProgress;
 
         private UnityAction _onActionsIsJumping;
         private Func<bool> _onIsNotJumping;
-
-        private Progress _currentProgress;
-        private float _currentMaxPoints => _centerTargetTransform.position.y;
 
         private void Initialize()
         {

@@ -14,9 +14,11 @@ namespace UI.MainMenu
     {
         [SerializeField] private Button _startButton;
         [SerializeField] private Button _infoButton;
+        [SerializeField] private Button _exitInfoButton;
         [SerializeField] private Button _exitButton;
 
         [SerializeField] private GameObject _mainPanel;
+        [SerializeField] private GameObject _infoPanel;
 
         [SerializeField] private GameObject _pointsMaxPanel;
         [SerializeField] private TextMeshProUGUI _pointsMaxText;
@@ -25,6 +27,7 @@ namespace UI.MainMenu
         {
             _startButton.onClick.AddListener(OnStartButtonClick);
             _infoButton.onClick.AddListener(OnInfoButtonClick);
+            _exitInfoButton.onClick.AddListener(OnExitInfoButtonClick);
             _exitButton.onClick.AddListener(OnExitButtonClick);
         }
 
@@ -41,7 +44,14 @@ namespace UI.MainMenu
 
         private void OnInfoButtonClick()
         {
-            // _mainPanel.SetActive(false);
+            _mainPanel.SetActive(false);
+            _infoPanel.SetActive(true);
+        }
+
+        private void OnExitInfoButtonClick()
+        {
+            _infoPanel.SetActive(false);
+            _mainPanel.SetActive(true);
         }
 
         private void OnExitButtonClick()
