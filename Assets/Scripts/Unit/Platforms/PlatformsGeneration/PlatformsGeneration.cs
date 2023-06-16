@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Threading.Tasks;
 using Data.AssetsAddressables;
 using Data.Setting;
 using Services.Factories.AbstractFactory;
@@ -28,9 +29,6 @@ namespace Unit.Platforms.PlatformsGeneration
             _maxPlatformSpawnPositionByY = gameplaySetting.MaxPlatformSpawnPositionByY;
         }
 
-        private const string PLATFORM_DEFAULT = AssetsAddressablesContainers.PLATFORM_DEFAULT;
-        private const string PLATFORM_DESTROYING = AssetsAddressablesContainers.PLATFORM_DESTROYING;
-
         private readonly IAbstractFactory _abstractFactory;
 
         private readonly float _maxPlatformSpawnPositionByX;
@@ -38,45 +36,56 @@ namespace Unit.Platforms.PlatformsGeneration
         private readonly float _minPlatformSpawnPositionByX;
         private readonly float _minPlatformSpawnPositionByY;
 
-        public void Generation(
+        private readonly string[] _platforms =
+        {
+            AssetsAddressablesContainers.PLATFORM_DEFAULT,
+            AssetsAddressablesContainers.PLATFORM_DESTROYING
+        };
+
+        public async void SpawnStartingPlatform(
             Vector2 startSpawnPosition,
             Func<bool> onIsNotJumping,
             UnityAction onActionJump)
         {
-            var spawnPosition = startSpawnPosition;
-
-            for (var i = 0; i < 1000; i++)
-            {
-                CreatedPlatform(
-                    spawnPosition,
-                    i % 2 == 0 ? PLATFORM_DEFAULT : PLATFORM_DESTROYING,
-                    onIsNotJumping,
-                    onActionJump);
-
-                spawnPosition.y += Random.Range(
-                    _minPlatformSpawnPositionByY,
-                    _maxPlatformSpawnPositionByY);
-
-                spawnPosition.x = Random.Range(
-                    _minPlatformSpawnPositionByX,
-                    _maxPlatformSpawnPositionByX);
-            }
+            var platform = await SpawnPlatform(startSpawnPosition);
+            SetUpPlatform(platform, onIsNotJumping, onActionJump);
         }
 
         private async void CreatedPlatform(
-            Vector2 position,
-            string typePlatform,
+            float positionByY,
             Func<bool> onIsNotJumping,
             UnityAction onActionsIsJumping)
         {
-            var platform = await _abstractFactory.CreateInstance<GameObject>(typePlatform);
+            var position = new Vector3(
+                Random.Range(_minPlatformSpawnPositionByX, _maxPlatformSpawnPositionByX),
+                Random.Range(_minPlatformSpawnPositionByY, _maxPlatformSpawnPositionByY) + positionByY);
 
-            platform.transform.position = position;
+            var platform = await SpawnPlatform(position);
+            SetUpPlatform(platform, onIsNotJumping, onActionsIsJumping);
+        }
 
-            if (platform.TryGetComponent<IPlatform>(out var iPlatform))
+        private void SetUpPlatform(GameObject platform, Func<bool> onIsNotJumping, UnityAction onActionsIsJumping)
+        {
+            if (!platform.TryGetComponent<IPlatform>(out var iPlatform)) return;
+
+            var jumping = onActionsIsJumping;
+            onActionsIsJumping += () =>
             {
-                iPlatform.SetUp(onIsNotJumping, onActionsIsJumping);
-            }
+                if (iPlatform.IsCreatedNewPlatform) return;
+                CreatedPlatform(iPlatform.PositionByY, onIsNotJumping, jumping);
+                iPlatform.IsCreatedNewPlatform = true;
+            };
+
+            iPlatform.SetUp(onIsNotJumping, onActionsIsJumping);
+        }
+
+        private async Task<GameObject> SpawnPlatform(Vector3 position)
+        {
+            var random = Random.Range(0, _platforms.Length);
+            var platform = _platforms[random];
+            var platformInstance = await _abstractFactory.CreateInstance<GameObject>(platform);
+            platformInstance.transform.position = position;
+            return platformInstance;
         }
     }
 }

@@ -47,13 +47,13 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 923f6bad6bf85e64eae0e70cea8fd9c7
-    m_Address: Platforms/Destroying
+  - m_GUID: 5cd07e1dd56b3f542a8704ab9bbfe9ea
+    m_Address: Screens/MainMenu
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5cd07e1dd56b3f542a8704ab9bbfe9ea
-    m_Address: Screens/MainMenu
+  - m_GUID: c20fb695feb93284da692fdd2bf92a14
+    m_Address: Platforms/Destroying
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

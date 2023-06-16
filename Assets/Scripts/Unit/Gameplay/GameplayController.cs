@@ -76,7 +76,7 @@ namespace Unit.Gameplay
             _cameraController.CreatedCamera(
                 _centerTargetTransform);
 
-            _platformsGeneration.Generation(
+            _platformsGeneration.SpawnStartingPlatform(
                 new Vector2(0, _startPlatformSpawnPositionByY),
                 _onIsNotJumping,
                 _onActionsIsJumping);

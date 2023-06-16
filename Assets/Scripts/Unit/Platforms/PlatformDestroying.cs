@@ -13,7 +13,7 @@ namespace Unit.Platforms
         {
             IsNotJumping = isNotJumping;
             ActionsIsJumping += actionsIsJumping;
-            ActionsIsJumping += () => Destroy(gameObject, 0.5f);
+            ActionsIsJumping += () => Destroy(gameObject, 0.25f);
         }
     }
 }

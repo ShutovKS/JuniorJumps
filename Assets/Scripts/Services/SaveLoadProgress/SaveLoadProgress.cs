@@ -15,17 +15,12 @@ namespace Services.SaveLoadProgress
         {
             var progressJson = JsonUtility.ToJson(progress);
             PlayerPrefs.SetString(PROGRESS_KEY, progressJson);
-
-            Debug.Log($"UpdateProgress {progressJson}");
-            Debug.Log($"UpdateProgress {progress.maxPoints.value}");
         }
 
         public Progress LoadProgress()
         {
             var progressJson = PlayerPrefs.GetString(PROGRESS_KEY);
             var progress = JsonUtility.FromJson<Progress>(progressJson) ?? new Progress();
-            
-            Debug.Log($"LoadProgress {progress.maxPoints.value}");
 
             return progress;
         }
