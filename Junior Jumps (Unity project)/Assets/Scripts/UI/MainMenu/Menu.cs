@@ -29,6 +29,10 @@ namespace UI.MainMenu
             _infoButton.onClick.AddListener(OnInfoButtonClick);
             _exitInfoButton.onClick.AddListener(OnExitInfoButtonClick);
             _exitButton.onClick.AddListener(OnExitButtonClick);
+            
+            #if UNITY_WEBGL
+            _exitButton.gameObject.SetActive(false);
+            #endif
         }
 
         public void SetMaxPoints(int pointsMax)
